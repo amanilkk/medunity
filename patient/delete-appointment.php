@@ -24,7 +24,7 @@
         $stmt->execute();
         //$sql= $database->query("delete from doctor where docemail='$email';");
         //print_r($email);
-        header("location: appointment.php");
+        header("location: security.php");
     }
 
 

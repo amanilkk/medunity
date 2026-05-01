@@ -286,7 +286,7 @@
                                     
                                     <br>
                                     <p class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49)">We  couldnt find anything related to your keywords !</p>
-                                    <a class="non-style-link" href="patient.php"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Patients &nbsp;</font></button>
+                                    <a class="non-style-link" href="backup.php"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Patients &nbsp;</font></button>
                                     </a>
                                     </center>
                                     <br><br><br><br>
@@ -368,7 +368,7 @@
             <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
-                        <a class="close" href="patient.php">&times;</a>
+                        <a class="close" href="backup.php">&times;</a>
                         <div class="content">
 
                         </div>
@@ -460,7 +460,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <a href="patient.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
+                                    <a href="backup.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
                                 
                                     
                                 </td>

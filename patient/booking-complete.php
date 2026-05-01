@@ -37,7 +37,7 @@
             $sql2="insert into appointment(pid,apponum,scheduleid,appodate) values ($userid,$apponum,$scheduleid,'$date')";
             $result= $database->query($sql2);
             //echo $apponom;
-            header("location: appointment.php?action=booking-added&id=".$apponum."&titleget=none");
+            header("location: security.php?action=booking-added&id=".$apponum."&titleget=none");
 
         }
     }

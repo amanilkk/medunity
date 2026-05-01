@@ -232,7 +232,7 @@
                                     
                                     <br>
                                     <p class="heading-main12" style="margin-left: 45px;font-size:20px;color:rgb(49, 49, 49)">We  couldnt find anything related to your keywords !</p>
-                                    <a class="non-style-link" href="appointment.php"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Appointments &nbsp;</font></button>
+                                    <a class="non-style-link" href="security.php"><button  class="login-btn btn-primary-soft btn"  style="display: flex;justify-content: center;align-items: center;margin-left:20px;">&nbsp; Show all Appointments &nbsp;</font></button>
                                     </a>
                                     </center>
                                     <br><br><br><br>
@@ -367,14 +367,14 @@
                     <center>
                     <br><br>
                         <h2>Booking Successfully.</h2>
-                        <a class="close" href="appointment.php">&times;</a>
+                        <a class="close" href="security.php">&times;</a>
                         <div class="content">
                         Your Appointment number is '.$id.'.<br><br>
                             
                         </div>
                         <div style="display: flex;justify-content: center;">
                         
-                        <a href="appointment.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;OK&nbsp;&nbsp;</font></button></a>
+                        <a href="security.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;OK&nbsp;&nbsp;</font></button></a>
                         <br><br><br><br>
                         </div>
                     </center>
@@ -390,7 +390,7 @@
                     <div class="popup">
                     <center>
                         <h2>Are you sure?</h2>
-                        <a class="close" href="appointment.php">&times;</a>
+                        <a class="close" href="security.php">&times;</a>
                         <div class="content">
                             You want to Cancel this Appointment?<br><br>
                             Session Name: &nbsp;<b>'.substr($title,0,40).'</b><br>
@@ -398,8 +398,8 @@
                             
                         </div>
                         <div style="display: flex;justify-content: center;">
-                        <a href="delete-appointment.php?id='.$id.'" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"<font class="tn-in-text">&nbsp;Yes&nbsp;</font></button></a>&nbsp;&nbsp;&nbsp;
-                        <a href="appointment.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;No&nbsp;&nbsp;</font></button></a>
+                        <a href="delete-security.php?id='.$id.'" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"<font class="tn-in-text">&nbsp;Yes&nbsp;</font></button></a>&nbsp;&nbsp;&nbsp;
+                        <a href="security.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;No&nbsp;&nbsp;</font></button></a>
 
                         </div>
                     </center>
@@ -431,7 +431,7 @@
                     <div class="popup">
                     <center>
                         <h2></h2>
-                        <a class="close" href="doctors.php">&times;</a>
+                        <a class="close" href="users.php">&times;</a>
                         <div class="content">
                             eDoc Web App<br>
                             
@@ -500,7 +500,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <a href="doctors.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
+                                    <a href="users.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
                                 
                                     
                                 </td>
