@@ -115,10 +115,10 @@ Les correctifs de sécurité seront appliqués dès qu’une vulnérabilité est
 ## 📩 Contact
 
 
-yalaoui.djamila@univ-constantine2.dz
+djamila.yalaoui@univ-constantine2.dz
 
-lakehal.amani-ala@univ-constantine2.dz
+amani.lakehal@univ-constantine2.dz
 
-sahour.lina-djihane@univ-constantine2.dz
+lina.sahour@univ-constantine2.dz
 
-zaatout.douaa@univ-constantine2.dz
+douaa.zaatout@univ-constantine2.dz
