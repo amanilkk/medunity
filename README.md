@@ -97,7 +97,7 @@ Il centralise les activités médicales, administratives, financières et logist
 1. Cloner le projet :
 
 ```bash
-git clone https://github.com/amanilkk/clinic-management-system.git
+git clone https://github.com/amanilkk/medunity
 ```
 
 2. Placer le projet dans le dossier `htdocs` (XAMPP)
@@ -109,7 +109,7 @@ git clone https://github.com/amanilkk/clinic-management-system.git
 5. Accéder via :
 
 ```
-http://localhost/nom-du-projet
+http://localhost/medunity
 ```
 
 ---
