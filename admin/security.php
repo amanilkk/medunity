@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<?php include("../includes/header.php"); ?>
+
+<body>
 <?php
 // security.php - Sécurité et audit
 session_start();
@@ -94,7 +100,7 @@ $active_sessions = $database->query("SELECT s.*,u.full_name,u.email FROM session
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo-area">
-            <div class="logo">Admin<span>Clinique</span></div>
+           <div class="logo">MED<span>UNITY</span></div>
             <div class="logo-sub">Gestion Administrative</div>
         </div>
         <nav>

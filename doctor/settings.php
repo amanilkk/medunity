@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<?php include("../includes/header.php"); ?>
+
+<body>
 <?php
 require_once 'doctor_functions.php';
 requireDoctor();
@@ -26,18 +32,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $success = "Paramètres mis à jour avec succès.";
         // Mise à jour du mot de passe si rempli
         if (!empty($new_password)) {
-            $hashed = password_hash($new_password, PASSWORD_DEFAULT);
-            $stmt3 = $database->prepare("UPDATE users SET password = ? WHERE id = ?");
-            $stmt3->bind_param("si", $hashed, $doctor['user_id']);
-            $stmt3->execute();
-            $success .= " Le mot de passe a également été modifié.";
+            if (strlen($new_password) >= 6) {
+                $hashed = password_hash($new_password, PASSWORD_DEFAULT);
+                $stmt3 = $database->prepare("UPDATE users SET password = ? WHERE id = ?");
+                $stmt3->bind_param("si", $hashed, $doctor['user_id']);
+                $stmt3->execute();
+                $success .= " Le mot de passe a également été modifié.";
+            } else {
+                $error = "Le mot de passe doit contenir au moins 6 caractères.";
+            }
         }
         // Rafraîchir les données locales
-        $doctor = getCurrentDoctor($database);
+        if (empty($error)) {
+            $doctor = getCurrentDoctor($database);
+        }
     } else {
         $error = "Erreur lors de la mise à jour.";
     }
 }
+
+// Récupérer le statut 2FA
+$stmt = $database->prepare("SELECT two_factor_enabled FROM users WHERE id = ?");
+$stmt->bind_param("i", $doctor['user_id']);
+$stmt->execute();
+$user_2fa = $stmt->get_result()->fetch_assoc();
+$two_factor_enabled = $user_2fa['two_factor_enabled'] ?? 0;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -54,6 +73,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         .settings-content { display: none; animation: fadeIn 0.3s; }
         .settings-content.active { display: block; }
+        
+        /* Styles 2FA */
+        .twofa-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 15px 0;
+        }
+        .badge-2fa-on {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--success-light);
+            color: var(--success);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-2fa-off {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: #fee2e2;
+            color: #991b1b;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .info-note-2fa {
+            background: var(--info-light);
+            border-left: 4px solid var(--info);
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: var(--radius);
+            font-size: 0.75rem;
+            color: var(--info);
+        }
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+        .btn-secondary {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+        }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -75,6 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="s-nav-item active" onclick="tab('profil', this)"><i data-lucide="user"></i> Profil Personnel</div>
                     <div class="s-nav-item" onclick="tab('cabinet', this)"><i data-lucide="briefcase"></i> Cabinet & Expérience</div>
                     <div class="s-nav-item" onclick="tab('securite', this)"><i data-lucide="shield-check"></i> Sécurité</div>
+                    <div class="s-nav-item" onclick="tab('twofa', this)"><i data-lucide="key"></i> Authentification 2FA</div>
                 </div>
 
                 <div class="card">
@@ -120,7 +201,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="form-group">
                                 <label>Nouveau mot de passe</label>
                                 <input type="password" name="new_password" class="input" placeholder="Laisser vide pour ne pas changer">
-                                <span class="text-small text-muted">Utilisez au moins 8 caractères avec des chiffres.</span>
+                                <span class="text-small text-muted">Utilisez au moins 6 caractères.</span>
+                            </div>
+                        </div>
+
+                        <div id="twofa" class="settings-content">
+                            <h3 style="margin-bottom: 20px;">🔐 Authentification à deux facteurs (2FA)</h3>
+                            <div class="twofa-row">
+                                <div>
+                                    <strong>Statut actuel :</strong>
+                                    <?php if($two_factor_enabled): ?>
+                                        <span class="badge-2fa-on">✅ Activé</span>
+                                    <?php else: ?>
+                                        <span class="badge-2fa-off">❌ Désactivé</span>
+                                    <?php endif; ?>
+                                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">
+                                        La 2FA ajoute une couche de sécurité supplémentaire.
+                                        Un code à usage unique vous sera demandé à chaque connexion.
+                                    </p>
+                                </div>
+                                <a href="2fa-setup.php" class="btn btn-primary">
+                                    <?= $two_factor_enabled ? '⚙️ Gérer la 2FA' : '🔒 Activer la 2FA' ?>
+                                </a>
+                            </div>
+                            <div class="info-note-2fa">
+                                💡 <strong>Recommandé :</strong> Activez la 2FA pour protéger votre compte médical
+                                et les données sensibles de vos patients.
                             </div>
                         </div>
 
@@ -144,7 +250,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.getElementById(id).classList.add('active');
             btn.classList.add('active');
         }
-        lucide.createIcons();
+        
+        // Initialiser Lucide icons si disponible
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     </script>
 </body>
 </html>

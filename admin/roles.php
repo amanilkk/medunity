@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<?php include("../includes/header.php"); ?>
+
+<body>
 <?php
 // roles.php - Gestion des rôles et permissions
 session_start();
@@ -53,7 +59,7 @@ $total_roles = $database->query("SELECT COUNT(*) AS n FROM roles")->fetch_assoc(
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo-area">
-            <div class="logo">Admin<span>Clinique</span></div>
+           <div class="logo">MED<span>UNITY</span></div>
             <div class="logo-sub">Gestion Administrative</div>
         </div>
         <nav>

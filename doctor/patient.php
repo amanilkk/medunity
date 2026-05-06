@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<?php include("../includes/header.php"); ?>
+
+<body>
 <?php
 session_start();
 if(!isset($_SESSION["user"]) || $_SESSION['usertype'] != 'd'){

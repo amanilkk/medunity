@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<?php include("../includes/header.php"); ?>
+
+<body>
 <?php
 // users.php - Gestion complète des utilisateurs (CRUD)
 session_start();
@@ -222,7 +228,7 @@ if(isset($_POST['reset_password'])){
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo-area">
-            <div class="logo">Admin<span>Clinique</span></div>
+            <div class="logo">MED<span>UNITY</span></div>
             <div class="logo-sub">Gestion Administrative</div>
         </div>
         <nav>
@@ -590,13 +596,26 @@ if(isset($_POST['reset_password'])){
                         </div>
                         <div class="form-group">
                             <label>Rôle <span class="required">*</span></label>
-                            <select name="role_id" class="form-select" required>
-                                <option value="">Sélectionner un rôle</option>
+                            <select name="role_id" class="form-select" required id="role_select_add" onchange="toggleSpecialtyField(this)">
+                                <option value="" data-name="">Sélectionner un rôle</option>
                                 <?php while($r = $roles_list->fetch_assoc()): ?>
-                                    <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['role_name']) ?></option>
+                                    <option value="<?= $r['id'] ?>" data-name="<?= htmlspecialchars(strtolower($r['role_name'])) ?>"><?= htmlspecialchars($r['role_name']) ?></option>
                                 <?php endwhile; ?>
                             </select>
                         </div>
+
+                        <!-- Champ spécialité — visible uniquement si rôle = médecin -->
+                        <div class="form-group full-width" id="specialty_field" style="display:none;">
+                            <label>Spécialité <span class="required">*</span></label>
+                            <?php $specialties = $database->query("SELECT id, sname FROM specialties ORDER BY sname"); ?>
+                            <select name="specialty_id" class="form-select" id="specialty_select">
+                                <option value="">— Sélectionner une spécialité —</option>
+                                <?php while($sp = $specialties->fetch_assoc()): ?>
+                                    <option value="<?= $sp['id'] ?>"><?= htmlspecialchars($sp['sname']) ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+
                         <div class="form-group">
                             <label>Mot de passe <span class="required">*</span></label>
                             <input type="password" name="password" class="form-input" placeholder="••••••••" required
@@ -618,6 +637,15 @@ if(isset($_POST['reset_password'])){
     </div>
 
     <script>
+        function toggleSpecialtyField(select) {
+            const roleName = select.options[select.selectedIndex].getAttribute('data-name') || '';
+            const isDoctor = roleName.includes('doctor') || roleName.includes('medecin') || roleName.includes('médecin') || roleName.includes('physician');
+            const field = document.getElementById('specialty_field');
+            const specialtySelect = document.getElementById('specialty_select');
+            field.style.display = isDoctor ? 'block' : 'none';
+            specialtySelect.required = isDoctor;
+        }
+
         function checkPasswordStrengthAdd(password) {
             let strength = 0;
             if(password.length >= 8) strength++;

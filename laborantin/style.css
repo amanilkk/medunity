@@ -1,0 +1,18 @@
+/* Styles spécifiques laborantin */
+.lab-result-form { background: var(--surf2); border-radius: var(--r); padding: 20px; margin-top: 20px; }
+.critical-badge { background: var(--red-l); color: var(--red); border: 1px solid var(--red); font-weight: 800; }
+.stock-low { background: var(--red-l) !important; border-left: 4px solid var(--red) !important; }
+.stock-critical { background: #FFE5E5 !important; border-left: 4px solid #990000 !important; }
+.progress-bar-container { background: var(--surf2); border-radius: 20px; height: 8px; overflow: hidden; }
+.progress-bar { background: var(--green); height: 100%; border-radius: 20px; transition: width 0.3s; }
+.test-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rs); padding: 12px 15px; margin-bottom: 10px; cursor: pointer; transition: var(--transition); }
+.test-card:hover { transform: translateY(-2px); box-shadow: var(--sh); }
+.test-card.urgent { border-left: 3px solid var(--red); }
+.test-card.critical { background: var(--red-l); border: 1px solid var(--red); }
+.patient-search-dropdown { position: absolute; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rs); max-height: 250px; overflow-y: auto; width: 100%; z-index: 100; display: none; }
+.patient-search-dropdown.show { display: block; }
+.patient-item { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid var(--border); }
+.patient-item:hover { background: var(--green-l); }
+.stock-item-card { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border); }
+.stock-quantity { font-family: 'DM Mono', monospace; font-weight: 700; font-size: 1.1rem; }
+.stock-quantity.low { color: var(--red); }

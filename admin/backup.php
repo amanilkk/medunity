@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<?php include("../includes/header.php"); ?>
+
+<body>
 <?php
 // backup.php - Gestion des sauvegardes (manuel + automatique)
 session_start();
@@ -349,7 +355,7 @@ $bk_history = $database->query("SELECT l.created_at, l.action, l.entity_type, l.
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo-area">
-            <div class="logo">Admin<span>Clinique</span></div>
+           <div class="logo">MED<span>UNITY</span></div>
             <div class="logo-sub">Gestion Administrative</div>
         </div>
         <nav>

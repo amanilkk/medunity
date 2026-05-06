@@ -1,70 +1,651 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/animations.css">  
-    <link rel="stylesheet" href="css/main.css">  
-    <link rel="stylesheet" href="css/index.css">
-    <title>eDoc</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MedUnity | Smart Clinic Management System</title>
+
+    <!-- Favicon pour l'onglet navigateur - Chemin corrigé -->
+    <link rel="icon" type="image/png" href="img/logomedunity.png">
+    <link rel="shortcut icon" type="image/png" href="img/logomedunity.png">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        table{
-            animation: transitionIn-Y-bottom 0.5s;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* custom cursor glow effect */
+        .cursor-glow {
+            position: fixed;
+            width: 380px;
+            height: 380px;
+            background: radial-gradient(circle, rgba(0,200,150,0.08) 0%, rgba(10,37,64,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.05s linear;
+            will-change: transform;
+        }
+
+        /* glassmorphism helper */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 200, 150, 0.2);
+        }
+
+        /* Hide scrollbar for cleaner look but keep functionality */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00C896;
+            border-radius: 10px;
+        }
+
+        /* smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .hover-lift {
+            transition: transform 0.25s ease, box-shadow 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.12);
+        }
+
+        /* animations keyframes */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .bg-gradient-radial {
+            background: radial-gradient(circle at 10% 20%, rgba(0,200,150,0.05), rgba(10,37,64,0.02));
+        }
+
+        /* Loading overlay pour la redirection */
+        .redirect-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 37, 64, 0.95);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .redirect-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 200, 150, 0.3);
+            border-radius: 50%;
+            border-top-color: #00C896;
+            animation: spin 0.8s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .redirect-text {
+            color: white;
+            margin-top: 20px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Style pour le logo dans la navigation */
+        .nav-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .team-logo-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
         }
     </style>
-        
 </head>
-<body>
-    
-    <div class="full-height">
-        <center>
-        <table border="0">
-            <tr>
-                <td width="80%">
-                    <font class="edoc-logo">eDoc. </font>
-                    <font class="edoc-logo-sub">| THE ECHANNELING PROJECT</font>
-                </td>
-                <td width="10%">
-                   <a href="login.php"  class="non-style-link"><p class="nav-item">LOGIN</p></a>
-                </td>
-                <td  width="10%">
-                    <a href="signup.php" class="non-style-link"><p class="nav-item" style="padding-right: 10px;">REGISTER</p></a>
-                </td>
-            </tr>
-            
-            <tr>
-                <td  colspan="3">
-                    <p class="heading-text">Avoid Hassles & Delays.</p>
+<body class="antialiased">
 
-                </td>
-            </tr>
-            <tr>
-                <td  colspan="3">
-                    <p class="sub-text2">How is health today, Sounds like not good!<br>Don't worry. Find your doctor online Book as you wish with eDoc. <br>
-                    We offer you a free doctor channeling service, Make your appointment now.</p>
-                </td>
-            </tr>
-            <tr>
-                
-                <td colspan="3">
-                    <center>
-                    <a href="login.php" >
-                        <input type="button" value="Make Appointment" class="login-btn btn-primary btn" style="padding-left: 25px;padding-right: 25px;padding-top: 10px;padding-bottom: 10px;">
-                    </a>
-                </center>
-                </td>
-                
-            </tr>
-            <tr>
-                <td colspan="3">
-                   
-                </td>
-            </tr>
-        </table>
-        <p class="sub-text2 footer-hashen">A Web Solution by Hashen.</p>
-    </center>
-    
+<!-- Overlay de redirection -->
+<div id="redirectOverlay" class="redirect-overlay">
+    <div class="spinner"></div>
+    <div class="redirect-text">🔐 Redirection vers l'espace sécurisé MedUnity...</div>
+</div>
+
+<!-- Cursor Glow Effect (subtle) -->
+<div id="cursorGlow" class="cursor-glow hidden md:block"></div>
+
+<!-- Navigation simple - avec logo -->
+<nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300 py-4 px-6 md:px-12 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+        <img src="img/logomedunity.png" alt="MedUnity Logo" class="nav-logo" onerror="this.onerror=null; this.style.display='none'; this.parentElement.querySelector('.logo-fallback').style.display='flex'">
+        <div class="logo-fallback w-8 h-8 rounded-full bg-gradient-to-r from-[#0A2540] to-[#00C896] shadow-md" style="display: none;"></div>
+        <span class="text-xl font-bold text-[#0A2540] tracking-tight">MedUnity</span>
     </div>
+    <div class="flex gap-4">
+        <button id="loginBtnNav" class="px-6 py-2.5 text-sm font-semibold rounded-full bg-[#00C896] text-white shadow-md hover:shadow-lg hover:bg-[#00b07e] transition-all duration-300">Connexion</button>
+    </div>
+</nav>
+
+<main class="overflow-hidden">
+    <!-- Hero Section with particles canvas -->
+    <section class="relative min-h-screen flex items-center justify-center px-6 pt-28 pb-20 bg-gradient-radial">
+        <!-- Canvas des particules médicales en arrière-plan -->
+        <canvas id="particleCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
+        <div class="relative z-10 max-w-5xl mx-auto text-center">
+            <div class="inline-block mb-6 px-4 py-1.5 rounded-full bg-white/40 backdrop-blur-sm border border-[#00C896]/30 text-[#0A2540] text-sm font-medium shadow-sm">
+                ✨ L'avenir de la santé connectée
+            </div>
+            <h1 id="heroTitle" class="text-4xl md:text-7xl lg:text-8xl font-extrabold tracking-tight text-[#0A2540] leading-tight">
+                MedUnity – <span class="bg-gradient-to-r from-[#0A2540] to-[#00C896] bg-clip-text text-transparent">Smart Clinic</span><br>Management System
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-600 mt-6 max-w-2xl mx-auto font-medium">
+                Simplify healthcare. Empower professionals. Enhance patient care.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-5 justify-center mt-10">
+                <button id="heroLoginBtn" class="group relative px-8 py-4 text-lg font-semibold rounded-full bg-[#0A2540] text-white shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
+                    <span class="relative z-10">🔐 Connexion</span>
+                    <span class="absolute inset-0 bg-[#00C896] scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></span>
+                </button>
+                <button id="heroDemoBtn" class="px-8 py-4 text-lg font-semibold rounded-full border-2 border-[#0A2540]/30 text-[#0A2540] bg-white/70 backdrop-blur-sm hover:bg-[#00C896]/10 hover:border-[#00C896] transition-all duration-300">
+                    📽️ Voir la démo
+                </button>
+            </div>
+        </div>
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce cursor-pointer" id="scrollIndicator">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="#0A2540" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Features Section with animated cards -->
+    <section id="features" class="py-24 px-6 md:px-12 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-[#00C896] font-semibold tracking-wide uppercase text-sm">Fonctionnalités d'exception</span>
+                <h2 class="text-3xl md:text-5xl font-bold text-[#0A2540] mt-2">Tout pour une clinique high-tech</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature cards -->
+                <div class="feature-card group bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-[#00C896]/50 opacity-0 translate-y-8">
+                    <div class="w-14 h-14 rounded-2xl bg-[#0A2540]/10 flex items-center justify-center mb-5 group-hover:bg-[#00C896]/20 transition-colors">🩺</div>
+                    <h3 class="text-2xl font-bold text-[#0A2540]">Gestion patients</h3>
+                    <p class="text-gray-500 mt-3">Dossier médical numérique complet, accessible en un clic pour une prise en charge optimale.</p>
+                </div>
+                <div class="feature-card group bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-[#00C896]/50 opacity-0 translate-y-8">
+                    <div class="w-14 h-14 rounded-2xl bg-[#0A2540]/10 flex items-center justify-center mb-5 group-hover:bg-[#00C896]/20 transition-colors">📅</div>
+                    <h3 class="text-2xl font-bold text-[#0A2540]">Rendez-vous intelligents</h3>
+                    <p class="text-gray-500 mt-3">Planification automatisée et rappels intelligents pour réduire l'absentéisme.</p>
+                </div>
+                <div class="feature-card group bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-[#00C896]/50 opacity-0 translate-y-8">
+                    <div class="w-14 h-14 rounded-2xl bg-[#0A2540]/10 flex items-center justify-center mb-5 group-hover:bg-[#00C896]/20 transition-colors">🧪</div>
+                    <h3 class="text-2xl font-bold text-[#0A2540]">Laboratoire intégré</h3>
+                    <p class="text-gray-500 mt-3">Suivi en temps réel des analyses et transmission sécurisée des résultats.</p>
+                </div>
+                <div class="feature-card group bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-[#00C896]/50 opacity-0 translate-y-8">
+                    <div class="w-14 h-14 rounded-2xl bg-[#0A2540]/10 flex items-center justify-center mb-5 group-hover:bg-[#00C896]/20 transition-colors">🛏️</div>
+                    <h3 class="text-2xl font-bold text-[#0A2540]">Gestion des Lits</h3>
+                    <p class="text-gray-500 mt-3">Vue d'ensemble instantanée de la capacité d'accueil et des mouvements.</p>
+                </div>
+                <div class="feature-card group bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-[#00C896]/50 opacity-0 translate-y-8">
+                    <div class="w-14 h-14 rounded-2xl bg-[#0A2540]/10 flex items-center justify-center mb-5 group-hover:bg-[#00C896]/20 transition-colors">📊</div>
+                    <h3 class="text-2xl font-bold text-[#0A2540]">Statistiques en temps réel</h3>
+                    <p class="text-gray-500 mt-3">Tableaux de bord analytiques pour piloter votre performance clinique.</p>
+                </div>
+                <div class="feature-card group bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-[#00C896]/50 opacity-0 translate-y-8">
+                    <div class="w-14 h-14 rounded-2xl bg-[#0A2540]/10 flex items-center justify-center mb-5 group-hover:bg-[#00C896]/20 transition-colors">🔒</div>
+                    <h3 class="text-2xl font-bold text-[#0A2540]">Sécurité HDS</h3>
+                    <p class="text-gray-500 mt-3">Chiffrement bout en bout & conformité RGPD, hébergement agréé santé.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Section : Vidéo / Parcours Patient animé style Lottie-like (CSS/JS animation) -->
+    <section class="py-20 px-6 bg-gradient-to-br from-gray-50 to-white">
+        <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12">
+            <div class="flex-1">
+                <span class="text-[#00C896] font-semibold tracking-wide uppercase text-sm">🔍 Voyez MedUnity en action</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-[#0A2540] mt-2">Parcours patient fluidifié</h2>
+                <p class="text-gray-500 mt-4 text-lg">Admission instantanée, consultation numérique et sortie simplifiée. Notre technologie connecte chaque acte de soin.</p>
+                <ul class="mt-6 space-y-3">
+                    <li class="flex items-center gap-3"><span class="w-6 h-6 bg-[#00C896]/20 rounded-full flex items-center justify-center text-[#00C896]">✓</span> Prise de rendez-vous en ligne</li>
+                    <li class="flex items-center gap-3"><span class="w-6 h-6 bg-[#00C896]/20 rounded-full flex items-center justify-center text-[#00C896]">✓</span> Dossier médical partagé instantané</li>
+                    <li class="flex items-center gap-3"><span class="w-6 h-6 bg-[#00C896]/20 rounded-full flex items-center justify-center text-[#00C896]">✓</span> Prescriptions & laboratoire intégré</li>
+                </ul>
+            </div>
+            <div class="flex-1 relative">
+                <div class="glass-card p-3 rounded-3xl shadow-2xl">
+                    <div class="relative rounded-2xl overflow-hidden aspect-video bg-[#0A2540]/5 flex items-center justify-center">
+                        <!-- Simulation vidéo / Animation illustrative -->
+                        <div id="animationDemo" class="w-full h-full flex flex-col items-center justify-center text-center p-6 bg-gradient-to-br from-[#0A2540]/5 to-[#00C896]/5">
+                            <div class="w-20 h-20 rounded-full bg-[#00C896]/20 flex items-center justify-center animate-pulse mb-4">
+                                <span class="text-4xl">🩺</span>
+                            </div>
+                            <p class="text-[#0A2540] font-semibold">Parcours patient démo • Simulation temps réel</p>
+                            <div class="flex gap-2 mt-4"><span class="w-3 h-3 bg-[#00C896] rounded-full"></span><span class="w-3 h-3 bg-gray-300 rounded-full"></span><span class="w-3 h-3 bg-gray-300 rounded-full"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why MedUnity Section (rapide, sécurisé, intuitif, complet) -->
+    <section class="py-24 px-6 bg-white">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold text-[#0A2540]">Pourquoi MedUnity ?</h2>
+            <p class="text-gray-500 max-w-2xl mx-auto mt-4 mb-16">Pensé pour les professionnels, conçu pour les patients. Éliminez la complexité administrative.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="p-6 rounded-2xl bg-gray-50 transition-all hover:bg-[#00C896]/5 hover:-translate-y-2 duration-300"><div class="text-5xl mb-3">⚡</div><h3 class="text-2xl font-bold">Rapide</h3><p class="text-gray-500">Interface ultra-réactive, flux de travail fluide</p></div>
+                <div class="p-6 rounded-2xl bg-gray-50 transition-all hover:bg-[#00C896]/5 hover:-translate-y-2 duration-300"><div class="text-5xl mb-3">🧠</div><h3 class="text-2xl font-bold">Intuitif</h3><p class="text-gray-500">Prise en main immédiate par vos équipes</p></div>
+                <div class="p-6 rounded-2xl bg-gray-50 transition-all hover:bg-[#00C896]/5 hover:-translate-y-2 duration-300"><div class="text-5xl mb-3">🔒</div><h3 class="text-2xl font-bold">Sécurisé</h3><p class="text-gray-500">Chiffrement de bout en bout, conformité HDS & RGPD</p></div>
+                <div class="p-6 rounded-2xl bg-gray-50 transition-all hover:bg-[#00C896]/5 hover:-translate-y-2 duration-300"><div class="text-5xl mb-3">🏥</div><h3 class="text-2xl font-bold">Complet</h3><p class="text-gray-500">De l'admission à la facturation, tout est centralisé</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Animated Stats Counter Section -->
+    <section class="py-20 px-6 bg-[#0A2540] text-white">
+        <div class="max-w-5xl mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12">MedUnity en chiffres</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div><div id="statPatients" class="text-5xl md:text-6xl font-extrabold text-[#00C896]">0</div><p class="text-xl mt-2">Patients accompagnés</p></div>
+                <div><div id="statDoctors" class="text-5xl md:text-6xl font-extrabold text-[#00C896]">0</div><p class="text-xl mt-2">Médecins actifs</p></div>
+                <div><div id="statServices" class="text-5xl md:text-6xl font-extrabold text-[#00C896]">0</div><p class="text-xl mt-2">Services intégrés</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ÉQUIPE DE DÉVELOPPEMENT SECTION (remplace la section CTA) -->
+    <section class="py-28 px-6 bg-gradient-to-br from-gray-50 via-white to-gray-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#00C896]/10 mb-6">
+                    <img src="img/logomedunity.png" alt="MedUnity Logo" class="team-logo-img" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-4xl\'>👥</span>'">
+                </div>
+                <h2 class="text-4xl md:text-5xl font-bold text-[#0A2540] mb-4">L'Équipe de Développement</h2>
+                <p class="text-gray-500 text-lg max-w-2xl mx-auto">Quatre talents passionnés au service de l'innovation médicale</p>
+                <div class="w-24 h-1 bg-[#00C896] mx-auto mt-6 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Membre 1 -->
+                <div class="team-card bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <div class="h-48 bg-gradient-to-br from-[#0A2540] to-[#00C896] flex items-center justify-center">
+                        <div class="w-28 h-28 rounded-full bg-white/20 flex items-center justify-center border-4 border-white shadow-xl">
+                            <span class="text-5xl">💻</span>
+                        </div>
+                    </div>
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-bold text-[#0A2540]">Yalaoui Djamila</h3>
+                        <p class="text-[#00C896] font-semibold text-sm mt-1">Lead Developer & Architect</p>
+                        <p class="text-gray-500 text-sm mt-3">Expert en architecture backend et bases de données médicales sécurisées.</p>
+                        <p class="text-gray-500 text-sm mt-3">contact : djamila.yalaoui@univ-constantine2.dz</p>
+                        <div class="flex justify-center gap-3 mt-5">
+                            <a href="#" class="social-icon text-gray-400 hover:text-[#0A2540] transition">📧</a>
+                            <a href="#" class="social-icon text-gray-400 hover:text-[#0A2540] transition">💼</a>
+                            <a href="#" class="social-icon text-gray-400 hover:text-[#0A2540] transition">🐙</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Membre 2 -->
+                <div class="team-card bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <div class="h-48 bg-gradient-to-br from-[#00C896] to-[#0A2540] flex items-center justify-center">
+                        <div class="w-28 h-28 rounded-full bg-white/20 flex items-center justify-center border-4 border-white shadow-xl">
+                            <span class="text-5xl">🎨</span>
+                        </div>
+                    </div>
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-bold text-[#0A2540]">Zaatout Douaa</h3>
+                        <p class="text-[#00C896] font-semibold text-sm mt-1">Frontend & UI/UX Designer</p>
+                        <p class="text-gray-500 text-sm mt-3">Designer d'interfaces intuitives avec une passion pour l'accessibilité.</p>
+                        <p class="text-gray-500 text-sm mt-3">contact : douaa.zaatout@univ-constantine.dz</p>
+                        <div class="flex justify-center gap-3 mt-5">
+                            <a href="#" class="social-icon text-gray-400 hover:text-[#0A2540] transition">📧</a>
+                            <a href="#" class="social-icon text-gray-400 hover:text-[#0A2540] transition">🎨</a>
+                            <a href="#" class="social-icon text-gray-400 hover:text-[#0A2540] transition">📱</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Membre 3 -->
+                <div class="team-card bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <div class="h-48 bg-gradient-to-br from-[#0A2540] to-[#1a4d6b] flex items-center justify-center">
+                        <div class="w-28 h-28 rounded-full bg-white/20 flex items-center justify-center border-4 border-white shadow-xl">
+                            <span class="text-5xl">🔒</span>
+                        </div>
+                    </div>
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-bold text-[#0A2540]">Lakehal Amani Ala</h3>
+                        <p class="text-[#00C896] font-semibold text-sm mt-1">Security & DevOps Engineer</p>
+                        <p class="text-gray-500 text-sm mt-3">Spécialiste en cybersécurité et conformité HDS / RGPD.</p>
+                        <p class="text-gray-500 text-sm mt-3">contact : amani.lakehal@univ-constantine2.dz</p>
+                        <div class="flex justify-center gap-3 mt-5">
+                            <a href="#" class="social-icon text-gray-400 hover:text-[#0A2540] transition">📧</a>
+                            <a href="#" class="social-icon text-gray-400 hover:text-[#0A2540] transition">🔐</a>
+                            <a href="#" class="social-icon text-gray-400 hover:text-[#0A2540] transition">☁️</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Membre 4 -->
+                <div class="team-card bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <div class="h-48 bg-gradient-to-br from-[#00C896] to-[#008f6e] flex items-center justify-center">
+                        <div class="w-28 h-28 rounded-full bg-white/20 flex items-center justify-center border-4 border-white shadow-xl">
+                            <span class="text-5xl">📊</span>
+                        </div>
+                    </div>
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-bold text-[#0A2540]">Sahour Lina Djihane</h3>
+                        <p class="text-[#00C896] font-semibold text-sm mt-1">Data Analyst & Product Owner</p>
+                        <p class="text-gray-500 text-sm mt-3">Analyse des données cliniques et amélioration continue du produit.</p>
+                        <p class="text-gray-500 text-sm mt-3">contact : lina.sahour@univ-constantine2.dz</p>
+                        <div class="flex justify-center gap-3 mt-5">
+                            <a href="#" class="social-icon text-gray-400 hover:text-[#0A2540] transition">📧</a>
+                            <a href="#" class="social-icon text-gray-400 hover:text-[#0A2540] transition">📈</a>
+                            <a href="#" class="social-icon text-gray-400 hover:text-[#0A2540] transition">🎯</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t py-8 text-center text-gray-400 text-sm bg-white">
+        <p>© 2025 MedUnity – Smart Clinic System | Conforme HDS & RGPD | L'innovation au service des soins</p>
+    </footer>
+</main>
+
+<script>
+    // ==================== REDIRECTION VERS LOGIN.PHP ====================
+    // Fonction de redirection avec overlay élégant
+    function redirectToLogin() {
+        const overlay = document.getElementById('redirectOverlay');
+
+        // Afficher l'overlay de chargement
+        if (overlay) {
+            overlay.classList.add('active');
+        }
+
+        // Petit délai pour l'animation, puis redirection
+        setTimeout(function() {
+            window.location.href = 'login.php';
+        }, 400);
+    }
+
+    // ==================== FONCTIONS D'ANIMATION EXISTANTES ====================
+
+    // 1. particle animation (medical themed floating particles)
+    const canvas = document.getElementById('particleCanvas');
+    let ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+
+    function initParticles() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        particles = [];
+        let particleCount = Math.min(80, Math.floor(width / 20));
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 3 + 1.2,
+                alpha: Math.random() * 0.4 + 0.2,
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: (Math.random() - 0.5) * 0.2,
+                color: `rgba(0, 200, 150, ${Math.random() * 0.5 + 0.2})`
+            });
+        }
+    }
+
+    function drawParticles() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, width, height);
+        for (let p of particles) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < 0) p.x = width;
+            if (p.x > width) p.x = 0;
+            if (p.y < 0) p.y = height;
+            if (p.y > height) p.y = 0;
+        }
+        requestAnimationFrame(drawParticles);
+    }
+
+    window.addEventListener('resize', () => {
+        initParticles();
+    });
+    initParticles();
+    drawParticles();
+
+    // cursor glow effect
+    const cursorGlow = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', (e) => {
+        if (cursorGlow) {
+            cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        }
+    });
+
+    // scroll reveal animations + counter stats
+    const featureCards = document.querySelectorAll('.feature-card');
+    const statPatientSpan = document.getElementById('statPatients');
+    const statDoctorSpan = document.getElementById('statDoctors');
+    const statServicesSpan = document.getElementById('statServices');
+    let statsAnimated = false;
+
+    function revealOnScroll() {
+        const windowHeight = window.innerHeight;
+        featureCards.forEach(card => {
+            const rect = card.getBoundingClientRect();
+            if (rect.top < windowHeight - 100) {
+                card.classList.add('opacity-100', 'translate-y-0');
+                card.classList.remove('opacity-0', 'translate-y-8');
+            }
+        });
+        const statsSection = document.querySelector('.bg-\\[\\#0A2540\\]');
+        if (statsSection && !statsAnimated) {
+            const rect = statsSection.getBoundingClientRect();
+            if (rect.top < windowHeight - 150) {
+                statsAnimated = true;
+                animateNumbers(statPatientSpan, 12840, 1800);
+                animateNumbers(statDoctorSpan, 352, 1600);
+                animateNumbers(statServicesSpan, 26, 1400);
+            }
+        }
+    }
+
+    function animateNumbers(element, target, duration) {
+        let start = 0;
+        const increment = target / (duration / 16);
+        let current = 0;
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                element.innerText = target.toLocaleString();
+                clearInterval(timer);
+            } else {
+                element.innerText = Math.floor(current).toLocaleString();
+            }
+        }, 16);
+    }
+
+    window.addEventListener('scroll', revealOnScroll);
+    window.addEventListener('load', () => {
+        revealOnScroll();
+        document.getElementById('heroTitle')?.classList.add('animate-fade-in-up');
+    });
+    setTimeout(revealOnScroll, 300);
+
+    // ==================== BOUTONS DE CONNEXION AVEC REDIRECTION ====================
+    // Tous les boutons de connexion redirigent vers login.php
+    const loginButtons = ['loginBtnNav', 'heroLoginBtn'];
+
+    loginButtons.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            // Supprimer les anciens événements si présents et ajouter la redirection
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                redirectToLogin();
+            });
+        }
+    });
+
+    // Boutons démo (affichage d'une alerte informative)
+    const demoButtons = ['heroDemoBtn'];
+
+    demoButtons.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                alert("🎥 Démonstration MedUnity : Réduction de l'absentéisme de 34% et gain de 20h/mois pour l'équipe soignante.⏱️ Prenez rendez-vous pour une démo personnalisée.");
+            });
+        }
+    });
+
+    // Scroll Indicator smooth
+    const scrollIndicator = document.getElementById('scrollIndicator');
+    if (scrollIndicator) {
+        const newIndicator = scrollIndicator.cloneNode(true);
+        scrollIndicator.parentNode.replaceChild(newIndicator, scrollIndicator);
+
+        newIndicator.addEventListener('click', () => {
+            document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+
+    // Add micro-interactions for all buttons (hover scale effect)
+    const allBtns = document.querySelectorAll('button');
+    allBtns.forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+            btn.style.transition = 'transform 0.12s ease';
+            btn.style.transform = 'scale(1.02)';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'scale(1)';
+        });
+    });
+
+    // Add dark/light mode Toggle (bonus simple)
+    const toggleThemeBtn = document.createElement('div');
+    toggleThemeBtn.innerHTML = '🌓';
+    toggleThemeBtn.classList.add('fixed', 'bottom-6', 'right-6', 'z-50', 'bg-white', 'shadow-lg', 'w-12', 'h-12', 'rounded-full', 'flex', 'items-center', 'justify-center', 'cursor-pointer', 'border', 'border-gray-200', 'hover:bg-[#00C896]/10', 'transition-all');
+    document.body.appendChild(toggleThemeBtn);
+    let isDark = false;
+    toggleThemeBtn.addEventListener('click', () => {
+        if (!isDark) {
+            document.documentElement.classList.add('dark');
+            document.body.style.backgroundColor = '#111827';
+            document.body.style.color = '#f3f4f6';
+            document.querySelectorAll('section:not(.bg-\\[\\#0A2540\\])').forEach(sec => sec.style.backgroundColor = '#111827');
+            document.querySelectorAll('.bg-white').forEach(el => el.style.backgroundColor = '#1f2937');
+            document.querySelectorAll('.text-gray-500').forEach(el => el.style.color = '#9ca3af');
+            document.querySelectorAll('.glass-card').forEach(el => el.style.background = 'rgba(31,41,55,0.8)');
+            isDark = true;
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.body.style.backgroundColor = '';
+            document.body.style.color = '';
+            document.querySelectorAll('section').forEach(sec => sec.style.backgroundColor = '');
+            document.querySelectorAll('.bg-white').forEach(el => el.style.backgroundColor = '');
+            document.querySelectorAll('.text-gray-500').forEach(el => el.style.color = '');
+            document.querySelectorAll('.glass-card').forEach(el => el.style.background = '');
+            isDark = false;
+        }
+    });
+
+    console.log("MedUnity – Landing Page immersive - Redirection vers login.php activée");
+</script>
+<style>
+    .feature-card {
+        transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .opacity-0 {
+        opacity: 0;
+    }
+    .opacity-100 {
+        opacity: 1;
+    }
+    .translate-y-8 {
+        transform: translateY(2rem);
+    }
+    .translate-y-0 {
+        transform: translateY(0);
+    }
+    button:active {
+        transform: scale(0.97);
+    }
+</style>
 </body>
 </html>

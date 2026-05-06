@@ -19,8 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
 
         $stmt = $database->prepare(
-            "SELECT u.id, u.email, u.password, u.full_name, u.is_active, u.role_id, u.two_factor_enabled,
-                    r.role_name
+                "SELECT u.id, u.email, u.password, u.full_name, u.is_active, u.role_id, u.two_factor_enabled,
+                    u.failed_login_attempts, u.locked_until, r.role_name
              FROM users u
              JOIN roles r ON u.role_id = r.id
              WHERE u.email = ?
@@ -33,29 +33,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result->num_rows === 1) {
             $user = $result->fetch_assoc();
 
-            if (!$user['is_active']) {
+            // ⭐ VÉRIFIER LE VERROUILLAGE D'ABORD ⭐
+            if ($user['locked_until'] && strtotime($user['locked_until']) > time()) {
+                $lock_time = date('H:i:s', strtotime($user['locked_until']));
+                $error = "⏰ Compte verrouillé jusqu'à $lock_time. Trop de tentatives échouées.";
+            }
+            elseif (!$user['is_active']) {
                 $error = 'Compte désactivé. Contactez l\'administrateur.';
+            }
+            elseif (password_verify($password, $user['password'])) {
 
-            } elseif (password_verify($password, $user['password'])) {
+                // Connexion réussie - Réinitialiser les tentatives et déverrouiller
+                $database->query("UPDATE users SET last_login = NOW(), failed_login_attempts = 0, locked_until = NULL WHERE id = " . $user['id']);
 
-                /*/ ⭐⭐⭐ VÉRIFICATION 2FA ⭐⭐⭐
+                // Journaliser la connexion réussie
+                $ip = $_SERVER['REMOTE_ADDR'];
+                $database->query("INSERT INTO login_logs (user_id, email, ip_address, success) VALUES ({$user['id']}, '$email', '$ip', 1)");
+
+                // ⭐⭐⭐ VÉRIFICATION 2FA ⭐⭐⭐
                 if($user['two_factor_enabled'] == 1){
                     $_SESSION['2fa_pending'] = $user['id'];
                     $_SESSION['2fa_email'] = $user['email'];
                     $_SESSION['2fa_full_name'] = $user['full_name'];
                     $_SESSION['2fa_role'] = $user['role_name'];
                     $_SESSION['2fa_role_id'] = $user['role_id'];
+
                     header("location: 2fa-verify.php");
                     exit();
-                }*/
-
-                // Mettre à jour la date de dernière connexion et réinitialiser les tentatives échouées
-                $update_sql = "UPDATE users SET last_login = NOW(), failed_login_attempts = 0 WHERE id = " . $user['id'];
-                $database->query($update_sql);
-
-                // Journaliser la connexion réussie
-                $ip = $_SERVER['REMOTE_ADDR'];
-                $database->query("INSERT INTO login_logs (user_id, email, ip_address, success) VALUES ({$user['id']}, '$email', '$ip', 1)");
+                }
 
                 // Variables session
                 $_SESSION['user_id']    = $user['id'];
@@ -74,14 +79,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
             } else {
-                // Mot de passe incorrect
+                // ⭐ GÉRER LES TENTATIVES ÉCHOUÉES ⭐
+                $current_attempts = $user['failed_login_attempts'] ?? 0;
+                $new_attempts = $current_attempts + 1;
+
+                if ($new_attempts >= 5) {
+                    // Verrouiller le compte pour 30 minutes
+                    $lock_until = date('Y-m-d H:i:s', strtotime('+30 minutes'));
+                    $database->query("UPDATE users SET failed_login_attempts = $new_attempts, locked_until = '$lock_until' WHERE id = " . $user['id']);
+                    $error = '❌ Trop de tentatives. Compte verrouillé pour 30 minutes.';
+                } else {
+                    $database->query("UPDATE users SET failed_login_attempts = $new_attempts WHERE id = " . $user['id']);
+                    $remaining = 5 - $new_attempts;
+                    $error = "Email ou mot de passe incorrect. Plus que $remaining tentative(s) avant verrouillage.";
+                }
+
+                // Journaliser l'échec
                 $ip = $_SERVER['REMOTE_ADDR'];
                 $database->query("INSERT INTO login_logs (user_id, email, ip_address, success) VALUES ({$user['id']}, '$email', '$ip', 0)");
-
-                // Incrémenter le compteur de tentatives échouées
-                $database->query("UPDATE users SET failed_login_attempts = failed_login_attempts + 1 WHERE id = " . $user['id']);
-
-                $error = 'Email ou mot de passe incorrect.';
             }
 
         } else {
@@ -115,7 +130,7 @@ function getRedirectUrl($role_name) {
             return 'pharmacien/index.php';
         case 'laborantin':
             $_SESSION['usertype'] = 'laborantin';
-            return 'laborantin/lab_index.php';
+            return 'laborantin/index.php';
         case 'receptionniste':
             $_SESSION['usertype'] = 'receptionniste';
             return 'receptionniste/index.php';
@@ -125,7 +140,7 @@ function getRedirectUrl($role_name) {
         case 'comptable':
             $_SESSION['usertype'] = 'comptable';
             return 'comptable/index.php';
-        case 'agent_maintenance':
+        case 'gmg':
             $_SESSION['usertype'] = 'maintenance';
             return 'gmg/gmg_index.php';
         default:
